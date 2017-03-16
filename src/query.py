@@ -6,5 +6,10 @@ import pprint
 
 pprint = pprint.PrettyPrinter().pprint
 
+def read(line):
+    pass
+
+def 
+
 def loop(info):
     pprint(info)

@@ -23,16 +23,22 @@ class SmartThread:
         global thread_count
         thread_count += 1
         if name == None:
-            name = 'Thread ' + str(thread_count)
+            name = 'SmartThread ' + str(thread_count)
         self.box = Box(None)
         intermediate_args = (self.box, target, args, kwargs)
         self.thread = threading.Thread(target = thread_return,
                          name = name, args = intermediate_args,
                          daemon = True)
         
-    def start():
+    def start(self):
         self.thread.start()
         return self
+
+    def __str__(self):
+        return self.name
+        
+    def __repr__(self):
+        return '<SmartThread: ' + self.name + '>'
 
     def join(self):
         self.thread.join()
