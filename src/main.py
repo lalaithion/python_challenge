@@ -38,10 +38,10 @@ def main():
     for ip in ip_ls:
         geoip_threads[ip] = st.SmartThread(target = lookups.geoip,
                                 name = 'GeoIP Lookup for ' + str(ip),
-                                args = (ip,))
+                                args = (ip,)).start()
         rdap_threads[ip] = st.SmartThread(target = lookups.rdap,
                                 name = 'RDAP Lookup for ' + str(ip),
-                                args = (ip,))
+                                args = (ip,)).start()
     
     # join threads and gather info from them
     geoip_info = {}

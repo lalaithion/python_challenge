@@ -29,7 +29,10 @@ class SmartThread:
         self.thread = threading.Thread(target = thread_return,
                          name = name, args = intermediate_args,
                          daemon = True)
+        
+    def start():
         self.thread.start()
+        return self
 
     def join(self):
         self.thread.join()
