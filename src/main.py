@@ -15,8 +15,8 @@ import smart_threads as st
 # utility function to 'zip' two dictionaries where their keys overlap
 def dict_zip(d1, d2):
     ret = {}
-    for key, value in d1:
-        if key in d2:
+    for key, value in d1.items():
+        if key in d2.keys():
             ret[key] = (value, d2[key])
     return ret
 
@@ -37,10 +37,10 @@ def main():
     # more threads than cores
     for ip in ip_ls:
         geoip_threads[ip] = st.SmartThread(target = lookups.geoip,
-                                name = 'GeoIP Lookup for ' + ip,
+                                name = 'GeoIP Lookup for ' + str(ip),
                                 args = (ip,))
         rdap_threads[ip] = st.SmartThread(target = lookups.rdap,
-                                name = 'RDAP Lookup for ' + ip,
+                                name = 'RDAP Lookup for ' + str(ip),
                                 args = (ip,))
     
     # join threads and gather info from them
@@ -53,11 +53,11 @@ def main():
         rdap_info[ip] = thread.join()
     
     # put data into a nice structure
-    IpInfo = namedtuple('IpInfo', ['geoip', 'rdap'])
-    info = IpInfo( dict_zip(geoip_info, rdap_info) )
+    info = {key: {'geoip': value[0], 'rdap': value[1]}
+            for key, value in dict_zip(geoip_info, rdap_info).items()}
     
     # enter into a query loop regarding the information
     query.loop(info)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
