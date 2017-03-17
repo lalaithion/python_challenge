@@ -17,5 +17,5 @@ ip_regex = re.compile(ip_addr)
 
 def ip_addrs(string):
     # find all ip addresses and map them to IpAddr objects
-    ip_list = map(IpAddr, ip_regex.findall(string))
+    ip_list = map(lambda x: '.'.join(x), ip_regex.findall(string))
     return ip_list

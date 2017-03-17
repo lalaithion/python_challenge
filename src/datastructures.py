@@ -6,6 +6,11 @@
 class IpAddr:
     def __init__(self, data):
         self.tuple = tuple(map(int, data))
+        
+    @classmethod
+    def from_string(cls, string):
+        t = string.split('.')
+        return IpAddr(t)
     
     # who knows, may be useful
     def __contains__(self, i):

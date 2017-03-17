@@ -2,6 +2,13 @@
 
 # Izaak Weiss, 2017
 
+# WARNING
+# This version should never be used if the other main function can be.
+# This version has no multithreading, and as such is about 5 times slower.
+# It was created for testing purposes and may not be up to date with the
+# features available in main.py
+# END WARNING
+
 # standard library imports
 import fileinput
 import json
@@ -11,7 +18,6 @@ import parser
 import lookups
 import query
 import smart_threads as st
-from datastructures import IpAddr
 
 # utility function to 'zip' two dictionaries where their keys overlap
 def dict_zip(d1, d2):
@@ -26,10 +32,7 @@ def save(database):
         json.dump(database,dbfile,indent=2)
 
 def load(file):
-    with open('database.json', 'r') as dbfile:
-        database = json.load(dbfile)
-    database = {IpAddr.from_string(key): value for key, value in database.items()}
-    return database
+    pass
 
 def main():
     ip_ls = []
@@ -56,12 +59,12 @@ def main():
     
     # join threads and gather info from them
     geoip_info = {}
-    for ip, thread in geoip_threads.items():
-        geoip_info[ip] = thread.join()
+    for ip in ip_ls:
+        geoip_info[ip] = lookups.geoip(ip)
         
     rdap_info = {}
-    for ip, thread in rdap_threads.items():
-        rdap_info[ip] = thread.join()
+    for ip in ip_ls:
+        rdap_info[ip] = lookups.rdap(ip)
     
     # put data into a nice structure
     info = {key: {'geoip': value[0], 'rdap': value[1]}
@@ -71,11 +74,7 @@ def main():
     
     # enter into a query loop regarding the information
     query.loop(info)
-    
-def load_main():
-    info = load('database.json')
-    
-    query.loop(info)
+
 
 if __name__ == '__main__':
-    load_main()
+    main()
