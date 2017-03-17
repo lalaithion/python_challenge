@@ -25,6 +25,32 @@ You can also load a database file with a command line flag:
 
 `python3 main.py database.json -l`
 
+### Query Language
+
+After loading and saving the database, it will open a shell where you can enter commands to
+filter and list the IP addresses.
+
+`list`
+
+This command lists all IP addresses that satisfy the current filters
+
+`list geoip.country, geoip.city`
+
+List can be followed by other identifiers, which will be listed along with the IP
+
+`filter`
+
+Filter on its own prints the existing filters
+
+`filter geoip.country == 'US'`
+
+Filter can be followed with a logical condition; from now on, list will only show IPs
+that satisfy that condition
+
+`clear`
+
+This command removes all filters.
+
 ### Multithreading Performance Increases
 
 Multithreaded w/ 100 lines from list_of_ips.txt
