@@ -5,6 +5,7 @@
 # standard library imports
 import fileinput
 import json
+import argparse
 
 # local imports
 import parser
@@ -21,20 +22,22 @@ def dict_zip(d1, d2):
             ret[key] = (value, d2[key])
     return ret
     
-def save(database):
-    with open('database.json', 'w') as dbfile:
+# save dictionary to json file
+def save(database, filename):
+    with open(filename, 'w') as dbfile:
         json.dump(database,dbfile,indent=2)
 
-def load(file):
-    with open('database.json', 'r') as dbfile:
+# load the output of the previous function
+def load(filename):
+    with open(filename, 'r') as dbfile:
         database = json.load(dbfile)
     database = {IpAddr.from_string(key): value for key, value in database.items()}
     return database
 
-def main():
+def main(files, output):
     ip_ls = []
     # loop over stdin or lines from files supplied as command line arguments
-    for line in fileinput.input():
+    for line in fileinput.input(files):
         # append any ip addresses that occur in the line
         ip_ls += parser.ip_addrs(line)
     
@@ -67,15 +70,33 @@ def main():
     info = {key: {'geoip': value[0], 'rdap': value[1]}
             for key, value in dict_zip(geoip_info, rdap_info).items()}
     
-    save(info)
+    #
+    save(info, output)
     
     # enter into a query loop regarding the information
     query.loop(info)
     
-def load_main():
-    info = load('database.json')
+def load_main(files):
+    # loop over input files, loading them into a database
+    info = {}
+    for f in files:
+        info.update(load(f))
     
+    # enter into a query loop regarding the information
     query.loop(info)
 
+# handle command line arguments here
 if __name__ == '__main__':
-    load_main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('files', metavar='FILE', nargs='*', default=['-'],
+        help='files to read, if empty, stdin is used')
+    parser.add_argument('-o', '--output', dest='output', default='database.json',
+        help='specify the output file')
+    parser.add_argument('-l', '--load', dest='load', action='store_true',
+        help='if present, it treats the input files as json files output by this tool')
+    args = parser.parse_args()
+    
+    if args.load:
+        load_main(args.files)
+    else:
+        main(args.files, args.output)

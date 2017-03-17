@@ -16,6 +16,7 @@ import re
 # clear
 #   clears all filters
 
+# compile all regexes once
 filter_re = re.compile(r'\bfilter\b')
 list_re = re.compile(r'\blist\b')
 clear_re = re.compile(r'\bclear\b')
@@ -27,14 +28,17 @@ op_re = re.compile(r'==|!=|<>')
 whitespace_re = re.compile(r'\s*')
 comma_re = re.compile(r',')
 
+# this removed the current text and any whitespace after it
 def strip(code, match):
     code = code[match.end():]
     code = code[whitespace_re.match(code).end():]
     return code
 
+# this parses a filter command
 def parse_filter(code):
     filter_ls = []
     
+    # filter can have nothing after it
     if whitespace_re.fullmatch(code):
         return filter_ls
     
@@ -64,14 +68,17 @@ def parse_filter(code):
             break
         code = strip(code, match)
 
+    # make sure nothing is left over
     if whitespace_re.fullmatch(code):
         return filter_ls
     else:
         raise ValueError
 
+# this parses a list command
 def parse_list(code):
     list_ls = []
     
+    # list can have nothing after it
     if whitespace_re.fullmatch(code):
         return list_ls
     
@@ -90,11 +97,13 @@ def parse_list(code):
             break
         code = strip(code, match)
 
+    # make sure nothing is left over
     if whitespace_re.fullmatch(code):
         return list_ls
     else:
         raise ValueError
 
+# match the code to the correct command, and then parse that command
 def parse(code):
     match = filter_re.match(code)
     if match:
@@ -106,6 +115,8 @@ def parse(code):
         code = strip(code, match)
         return ('list', parse_list(code))
 
+    # clear doesn't need a function, but that means we check if
+    # anything is left over here
     match = clear_re.match(code)
     if match:
         code = strip(code, match)
@@ -113,4 +124,6 @@ def parse(code):
             return ('clear',)
         else:
             raise ValueError
-    return None
+    
+    # raise error if the command doesn't make sense
+    raise ValueError
