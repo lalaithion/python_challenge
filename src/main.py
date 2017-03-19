@@ -70,7 +70,7 @@ def main(files, output):
     info = {key: {'geoip': value[0], 'rdap': value[1]}
             for key, value in dict_zip(geoip_info, rdap_info).items()}
     
-    #
+    # save the databse
     save(info, output)
     
     # enter into a query loop regarding the information
