@@ -176,6 +176,10 @@ def parse(tokens):
     listables = []
     predicate = []
     
+    # if empty, return here
+    if tokens == []:
+        return Code([],[])
+    
     # see if the command is quit
     if tokens[0].type == 'quit':
         return Quit()

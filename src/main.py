@@ -73,8 +73,7 @@ def main(files, output):
     # save the databse
     save(info, output)
     
-    # enter into a query loop regarding the information
-    query.loop(info)
+    return info
     
 def load_main(files):
     # loop over input files, loading them into a database
@@ -82,21 +81,28 @@ def load_main(files):
     for f in files:
         info.update(load(f))
     
-    # enter into a query loop regarding the information
-    query.loop(info)
+    return info
 
 # handle command line arguments here
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('files', metavar='FILE', nargs='*', default=['-'],
-        help='files to read, if empty, stdin is used')
+        help='Files to read, if empty, stdin is used.')
     parser.add_argument('-o', '--output', dest='output', default='database.json',
-        help='specify the output file')
+        help='Specify the output file.')
     parser.add_argument('-l', '--load', dest='load', action='store_true',
-        help='if present, it treats the input files as json files output by this tool')
+        help='If present, it treats the input files as json files output by this tool.')
+    parser.add_argument('-c', '--command', dest='command', default=None, const='', nargs='?',
+        help='If present, no shell is opened and the command after it is run instead, \
+        with the result output. No command will simply print all IP adresses.')
     args = parser.parse_args()
     
     if args.load:
-        load_main(args.files)
+        info = load_main(args.files)
     else:
-        main(args.files, args.output)
+        info = main(args.files, args.output)
+    
+    if args.command == None:
+        query.loop(info)
+    else:
+        print(query.command(info,args.command), end='')

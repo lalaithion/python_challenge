@@ -25,6 +25,10 @@ You can also load a database file with a command line flag:
 
 `python3 main.py database.json -l`
 
+Instead of opening a REPL, you can also run a single query from the command line:
+
+`python3 main.py -l database.json -c 'show [geoip.city] where (geoip.country != US)'`
+
 ### Query Language
 
 After loading and saving the database, it will open a shell where you can enter commands to
