@@ -75,3 +75,28 @@ def run(line, database):
     # if it worked, put it into a displayabale format
     if code != None:
         return display(code, database)
+
+# take the list of lists and make it a marker deliniated string
+def table(data, marker):
+    res = ''
+
+    # find the longest element in each column:
+    buffers = [0 for i in range(len(data[0]))]
+    for row in data:
+        for index, item in enumerate(row):
+            buffers[index] = max(buffers[index], len(str(item)))
+        
+    for row in data:
+        for index, item in enumerate(row):
+            if item:
+                # justify it using spaces and a tab
+                s = str(item)
+                justify = buffers[index] - len(s)
+                res += s + (' ' * justify) + marker
+            else:
+                # add enough spaces to make it equally spaced
+                res += ' ' *  buffers[index] + marker
+        # add newlines at the end of each row
+        res += '\n'
+        
+    return res

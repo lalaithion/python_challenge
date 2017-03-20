@@ -6,13 +6,15 @@
 import fileinput
 import json
 import argparse
+import readline
 
 # local imports
-import parser
+import ip_parser
 import lookups
-import query.loop as query
 import smart_threads as st
 from datastructures import IpAddr
+import query.interpreter as interpreter
+import query.compiler as compiler
 
 # utility function to 'zip' two dictionaries where their keys overlap
 def dict_zip(d1, d2):
@@ -34,12 +36,12 @@ def load(filename):
     database = {IpAddr.from_string(key): value for key, value in database.items()}
     return database
 
-def main(files, output):
+def parse_and_lookup(files, output):
     ip_ls = []
     # loop over stdin or lines from files supplied as command line arguments
     for line in fileinput.input(files):
         # append any ip addresses that occur in the line
-        ip_ls += parser.ip_addrs(line)
+        ip_ls += ip_parser.ip_addrs(line)
     
     # uniquify the list, for performance reasons
     ip_ls = list(set(ip_ls))
@@ -75,13 +77,32 @@ def main(files, output):
     
     return info
     
-def load_main(files):
+def load_database(files):
     # loop over input files, loading them into a database
     info = {}
     for f in files:
         info.update(load(f))
     
     return info
+    
+# open a shell and run commands over and over
+def loop(database):
+    try:
+        while True:
+            line = input(' > ')
+            data = interpreter.run(line, database)
+            if type(data) == compiler.Quit:
+                break
+            if data != None:
+                print(interpreter.table(data, '\t'))
+    except EOFError:
+        print('')
+        return
+
+# run a single command on a databse
+def command(database, command, marker='\t'):
+    data = interpreter.run(command, database)
+    return interpreter.table(data, marker)
 
 # handle command line arguments here
 if __name__ == '__main__':
@@ -98,11 +119,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     if args.load:
-        info = load_main(args.files)
+        info = load_database(args.files)
     else:
-        info = main(args.files, args.output)
+        info = parse_and_lookup(args.files, args.output)
     
     if args.command == None:
-        query.loop(info)
+        loop(info)
     else:
-        print(query.command(info,args.command), end='')
+        print(command(info,args.command), end='')
