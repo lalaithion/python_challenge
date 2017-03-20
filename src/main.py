@@ -10,7 +10,7 @@ import argparse
 # local imports
 import parser
 import lookups
-import query
+import query.loop as query
 import smart_threads as st
 from datastructures import IpAddr
 
