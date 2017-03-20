@@ -6,7 +6,7 @@ The python library 'requests' is required for this to run.
 
 http://docs.python-requests.org/en/latest/user/install/
 
-### Command Line Interface
+## Command Line Interface
 
 You can use the unix style philosophy and just `cat` files into this tool's stdin:
 
@@ -29,7 +29,23 @@ Instead of opening a REPL, you can also run a single query from the command line
 
 `python3 main.py -l database.json -c 'show [geoip.city] where (geoip.country != US)'`
 
-### Query Language
+### Known Bug
+
+There's currently a bug where the REPL will not open correctly after parsing and retrieving data from new ip addresses.
+
+The workaround until I fix this (hopefully no one will ever see this error...) is to run the program once like this:
+
+`python3 main.py <files> -o database.json`
+
+and then again, like this:
+
+`python3 main.py -l database.json`
+
+which will open up a REPL with the right data.
+
+All of the other ways of running commands work. (New data + -c command, Loaded database + -c command, Loaded database + REPL).
+
+## Query Language
 
 After loading and saving the database, it will open a shell where you can enter commands to
 filter and list the IP addresses.
@@ -90,7 +106,7 @@ IP             	geoip.city  	geoip.country	geoip.org
 154.54.193.133 	Washington  	US           	AS174 Cogent Communications                         	
 ```
 
-### Multithreading Performance Increases
+## Multithreading Performance Increases
 
 Multithreaded w/ 100 lines from list_of_ips.txt
 
