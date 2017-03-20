@@ -30,26 +30,18 @@ You can also load a database file with a command line flag:
 After loading and saving the database, it will open a shell where you can enter commands to
 filter and list the IP addresses.
 
-`list`
+`show` is the simplest command; it will list all IP addresses.
 
-This command lists all IP addresses that satisfy the current filters
+`show [geoip.country, geoip.city]` will show all IP addresses as well as the city and country found in the geoip lookup.
 
-`list geoip.country, geoip.city`
+`show where (geoip.country == US)` will show all IP addresses from the US.
 
-List can be followed by other identifiers, which will be listed along with the IP
+`show where (geoip.country != US)` will show all IP addresses __not__ from the US.
 
-`filter`
+`show [geoip.city] where (geoip.country == US)` will combine both things above.
 
-Filter on its own prints the existing filters
-
-`filter geoip.country == 'US'`
-
-Filter can be followed with a logical condition; from now on, list will only show IPs
-that satisfy that condition
-
-`clear`
-
-This command removes all filters.
+`show where (or (geoip.country == US) (geoip.country == NL))` will or the two filters together. These can be nested, and
+the keyword `and` is also available for anding two filters together.
 
 ### Multithreading Performance Increases
 
