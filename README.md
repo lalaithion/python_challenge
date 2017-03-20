@@ -8,11 +8,7 @@ http://docs.python-requests.org/en/latest/user/install/
 
 ## Command Line Interface
 
-You can use the unix style philosophy and just `cat` files into this tool's stdin:
-
-`cat <filename> <filename> | python3 main.py`
-
-Or you can pass them in as arguments:
+You can pass files with IP addresses scattered through them in as arguments:
 
 `python3 main.py <filename> <filename>`
 
@@ -28,22 +24,6 @@ You can also load a database file with a command line flag:
 Instead of opening a REPL, you can also run a single query from the command line:
 
 `python3 main.py -l database.json -c 'show [geoip.city] where (geoip.country != US)'`
-
-### Known Bug
-
-There's currently a bug where the REPL will not open correctly after parsing and retrieving data from new ip addresses.
-
-The workaround until I fix this (hopefully no one will ever see this error...) is to run the program once like this:
-
-`python3 main.py <files> -o database.json`
-
-and then again, like this:
-
-`python3 main.py -l database.json`
-
-which will open up a REPL with the right data.
-
-All of the other ways of running commands work. (New data + -c command, Loaded database + -c command, Loaded database + REPL).
 
 ## Query Language
 
